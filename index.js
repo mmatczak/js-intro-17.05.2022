@@ -27,11 +27,17 @@ class OrderService {
     }
 
     findById(orderId) {
-        return this.orders.find(order => order.id === orderId);
+        return this.orders.find(byOrderId(orderId));
     }
 
     get value() {
         return this.orders;
+    }
+}
+
+function byOrderId(orderId) {
+    return function (order) {
+        return order.id === orderId;
     }
 }
 
