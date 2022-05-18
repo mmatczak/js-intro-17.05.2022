@@ -1,7 +1,8 @@
 class Employee {
-    constructor(firstName, lastName) {
+    constructor(firstName, lastName, id) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.id = id;
     }
 }
 
@@ -39,7 +40,22 @@ class EmployeeFormComponent {
     }
 }
 
-const component = new EmployeeFormComponent(document, new Employee('John', 'Smith'));
-component.onInit();
+class EmployeeService {
+    getOne(id, callbackFn) {
+        setTimeout(function () {
+            const employee = new Employee('John', 'Smith', 123);
+            callbackFn.call(employee, employee);
+        }, 2000);
+    }
+}
 
-setTimeout(() => console.log(component.employee), 5000);
+const employees = new EmployeeService();
+employees.getOne(123, createComponentAndInitializeItWith);
+console.log('End');
+
+function createComponentAndInitializeItWith(employee) {
+    const component = new EmployeeFormComponent(document, employee);
+    component.onInit();
+    console.log(component.employee);
+    throw new Error("hi, hi...");
+}
