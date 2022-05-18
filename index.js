@@ -42,6 +42,10 @@ class EmployeeFormComponent {
         const lastNameElement = formElement['lastName'];
         this.employee = new Employee(firstNameElement.value, lastNameElement.value);
         // TODO: call EmployeeService.save and log success to the console
+        this.employeeService.saveOne(this.employee).then(newEmployee => {
+            this.employee = newEmployee;
+            console.log(newEmployee);
+        });
     }
 }
 
@@ -52,6 +56,14 @@ class EmployeeService {
 
     saveOne(employee) {  // (employee: Employee) => Promise<Employee>
         // TODO: return Promise, delay by 3 seconds, return Employee with new ID
+        return new Promise(resolve => {
+            setTimeout(() => {
+                    // const newEmployee = new Employee(employee.firstName, employee.lastName, 9876);
+                    const newEmployee = {...employee, id: 987};
+                    resolve(newEmployee);
+                },
+                3000);
+        })
     }
 }
 
