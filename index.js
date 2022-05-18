@@ -42,26 +42,34 @@ class EmployeeFormComponent {
 
 class EmployeeService {
     getOne(id) {
-        return new Promise((resolve, reject) => {
-            setTimeout(function () {
-                const employee = new Employee('John', 'Smith', 123);
-                // resolve(employee);
-                reject(`No employee with ID ${id} found :(`);
-            }, 2000);
-        });
+        return fetch(`employees/${id}`)
+            .then(response => response.ok ? response.json() : Promise.reject(`No employee with ID ${id} found :(`));
     }
 }
 
-const employees = new EmployeeService();
-const employeePromise = employees.getOne(123);
-employeePromise
-    .then(createComponentAndInitializeItWith,
-        error => {
-            console.log(`Error1: ${error}`);
-            return new Employee('no name', '');
-        })
-    .then(value => console.log(`Callback2 got: `, value),
-        error => console.log(`Error2: ${error}`));
+const retVal = (async function main() {
+    const employees = new EmployeeService();
+
+    try {
+        const employee = await employees.getOne(123);
+        createComponentAndInitializeItWith(employee);
+    } catch (error) {
+        console.log(`Error1: ${error}`);
+    }
+})();
+
+console.log(retVal);
+
+
+// const employeePromise = employees.getOne(123);
+// employeePromise
+//     .then(createComponentAndInitializeItWith,
+//         error => {
+//             console.log(`Error1: ${error}`);
+//             return Promise.reject(error);
+//         })
+//     .then(value => console.log(`Callback2 got: `, value),
+//         error => console.log(`Error2: ${error}`));
 
 console.log('End');
 
@@ -69,5 +77,4 @@ function createComponentAndInitializeItWith(employee) {
     const component = new EmployeeFormComponent(document, employee);
     component.onInit();
     console.log(component.employee);
-    throw new Error("hi, hi...");
 }
