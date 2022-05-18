@@ -27,10 +27,11 @@ class EmployeeFormComponent {
 
     initFormWithEmployeeIfAny(employeeId) {
         if (employeeId != null) {
-            this.employeeService.getOne(employeeId).then(employee => {
-                this.document.querySelector('input#firstName').value = employee.firstName;
-                this.document.querySelector('input#lastName').value = employee.lastName;
-            })
+            this.employeeService.getOne(employeeId)
+                .then(employee => {
+                    this.document.querySelector('input#firstName').value = employee.firstName;
+                    this.document.querySelector('input#lastName').value = employee.lastName;
+                })
         }
     }
 
