@@ -7,14 +7,15 @@ class Employee {
 }
 
 class EmployeeFormComponent {
-    constructor(document, employee) {
+    constructor(document, employeeService) {
         this.document = document;
-        this.employee = employee || null;
+        this.employeeService = employeeService;
+        this.employee = null;
     }
 
-    onInit() {
+    onInit(employeeId) {
         this.saveOnFormSubmit();
-        this.initFormWithEmployeeIfAny();
+        this.initFormWithEmployeeIfAny(employeeId);
     }
 
     saveOnFormSubmit() {
@@ -24,10 +25,12 @@ class EmployeeFormComponent {
                 this.save.bind(this));
     }
 
-    initFormWithEmployeeIfAny() {
-        if (this.employee) {
-            document.querySelector('input#firstName').value = this.employee.firstName;
-            document.querySelector('input#lastName').value = this.employee.lastName;
+    initFormWithEmployeeIfAny(employeeId) {
+        if (employeeId != null) {
+            this.employeeService.getOne(employeeId).then(employee => {
+                this.document.querySelector('input#firstName').value = employee.firstName;
+                this.document.querySelector('input#lastName').value = employee.lastName;
+            })
         }
     }
 
@@ -37,44 +40,22 @@ class EmployeeFormComponent {
         const firstNameElement = formElement['firstName'];
         const lastNameElement = formElement['lastName'];
         this.employee = new Employee(firstNameElement.value, lastNameElement.value);
+        // TODO: call EmployeeService.save and log success to the console
     }
 }
 
 class EmployeeService {
     getOne(id) {
-        return fetch(`employees/${id}`)
-            .then(response => response.ok ? response.json() : Promise.reject(`No employee with ID ${id} found :(`));
+        return Promise.resolve(new Employee('John', 'Smith', id));
+    }
+
+    saveOne(employee) {  // (employee: Employee) => Promise<Employee>
+        // TODO: return Promise, delay by 3 seconds, return Employee with new ID
     }
 }
 
-const retVal = (async function main() {
-    const employees = new EmployeeService();
 
-    try {
-        const employee = await employees.getOne(123);
-        createComponentAndInitializeItWith(employee);
-    } catch (error) {
-        console.log(`Error1: ${error}`);
-    }
-})();
-
-console.log(retVal);
-
-
-// const employeePromise = employees.getOne(123);
-// employeePromise
-//     .then(createComponentAndInitializeItWith,
-//         error => {
-//             console.log(`Error1: ${error}`);
-//             return Promise.reject(error);
-//         })
-//     .then(value => console.log(`Callback2 got: `, value),
-//         error => console.log(`Error2: ${error}`));
-
+const component = new EmployeeFormComponent(document, new EmployeeService());
+component.onInit(123);
+console.log(component.employee);
 console.log('End');
-
-function createComponentAndInitializeItWith(employee) {
-    const component = new EmployeeFormComponent(document, employee);
-    component.onInit();
-    console.log(component.employee);
-}
