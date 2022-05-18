@@ -1,6 +1,8 @@
-import {Employee} from './employee.js';
+const Employee = require('./employee');
 
-export class EmployeeFormComponent {
+class EmployeeFormComponent {
+    observers = [];
+
     constructor(document, employeeService) {
         this.document = document;
         this.employeeService = employeeService;
@@ -29,16 +31,30 @@ export class EmployeeFormComponent {
         }
     }
 
+    onEmployeeChange(callbackFn) {
+        this.observers.push(callbackFn);
+    }
+
+    notifyOnNewEmployee() {
+        this.observers.forEach(observer => observer(this.employee));
+    }
+
     save(event) {
         event.preventDefault();
         const formElement = event.target;
-        const firstNameElement = formElement['firstName'];
-        const lastNameElement = formElement['lastName'];
-        this.employee = new Employee(firstNameElement.value, lastNameElement.value);
+        const firstNameElement = formElement.querySelector('#firstName');
+        const lastNameElement = formElement.querySelector('#lastName');
+        // this.employee = new Employee(firstNameElement.value, lastNameElement.value);
         // TODO: call EmployeeService.save and log success to the console
-        this.employeeService.saveOne(this.employee).then(newEmployee => {
-            this.employee = newEmployee;
-            console.log(newEmployee);
-        });
+        this.employeeService.saveOne(new Employee(firstNameElement.value, lastNameElement.value))
+            .then(newEmployee => {
+                this.employee = newEmployee;
+                console.log(newEmployee);
+            })
+            .then(this.notifyOnNewEmployee.bind(this));
     }
+
+
 }
+
+module.exports = EmployeeFormComponent;

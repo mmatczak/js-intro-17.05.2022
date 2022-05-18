@@ -6,7 +6,7 @@ class EmployeeService {
     getOne(id) {
         return new Promise(resolve => {
             setTimeout(() =>
-                resolve(new Employee('John', 'Smith', id)), 3000);
+                resolve(new Employee('John', 'Smith', id)), 500);
         });
     }
 
