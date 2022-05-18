@@ -41,16 +41,28 @@ class EmployeeFormComponent {
 }
 
 class EmployeeService {
-    getOne(id, callbackFn) {
-        setTimeout(function () {
-            const employee = new Employee('John', 'Smith', 123);
-            callbackFn.call(employee, employee);
-        }, 2000);
+    getOne(id) {
+        return new Promise((resolve, reject) => {
+            setTimeout(function () {
+                const employee = new Employee('John', 'Smith', 123);
+                // resolve(employee);
+                reject(`No employee with ID ${id} found :(`);
+            }, 2000);
+        });
     }
 }
 
 const employees = new EmployeeService();
-employees.getOne(123, createComponentAndInitializeItWith);
+const employeePromise = employees.getOne(123);
+employeePromise
+    .then(createComponentAndInitializeItWith,
+        error => {
+            console.log(`Error1: ${error}`);
+            return new Employee('no name', '');
+        })
+    .then(value => console.log(`Callback2 got: `, value),
+        error => console.log(`Error2: ${error}`));
+
 console.log('End');
 
 function createComponentAndInitializeItWith(employee) {
