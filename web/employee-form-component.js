@@ -1,6 +1,7 @@
-const Employee = require('./employee');
+import {Employee} from './employee.js';
 
-class EmployeeFormComponent {
+
+export class EmployeeFormComponent {
     observers = [];
 
     constructor(document, employeeService) {
@@ -56,5 +57,3 @@ class EmployeeFormComponent {
 
 
 }
-
-module.exports = EmployeeFormComponent;
